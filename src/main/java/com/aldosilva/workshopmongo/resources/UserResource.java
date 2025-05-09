@@ -1,26 +1,35 @@
 package com.aldosilva.workshopmongo.resources;
 
 import com.aldosilva.workshopmongo.domain.User;
+import com.aldosilva.workshopmongo.dtos.UserDTO;
+import com.aldosilva.workshopmongo.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/users")
 public class UserResource {
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<User>> findAll(){
-        User silva = new User(1L, "Aldo Silva", "aldo.silva@outlook.com");
-        User alex = new User(2L, "Alex Silva", "alex.silva@outlook.com");
-        List<User> list = new ArrayList<>();
-        list.addAll(Arrays.asList(silva,alex));
-        return ResponseEntity.ok().body(list);
+    @Autowired
+    private UserService userService;
+
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> findAll(){
+        List<User> list = userService.findAll();
+        List<UserDTO> listDto = list.stream().map( x -> new UserDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<UserDTO> findById(@PathVariable String id){
+        return ResponseEntity.ok(userService.buscarUserPorId(id));
     }
 
 }
