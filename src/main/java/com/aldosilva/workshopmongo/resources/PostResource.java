@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,11 @@ public class PostResource {
     @GetMapping(value = "/{id}")
     public ResponseEntity<Post> findById(@PathVariable String id) {
         return ResponseEntity.ok(postService.buscarPostPorId(id));
+    }
+
+    @GetMapping(value = "/titlesearch")
+    public ResponseEntity<List<Post>> findByTitle(@RequestParam(value = "text", defaultValue = "") String text) {
+        return ResponseEntity.ok(postService.findByTitle(text));
     }
 
 }
