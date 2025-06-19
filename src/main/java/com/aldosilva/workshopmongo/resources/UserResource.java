@@ -1,10 +1,12 @@
 package com.aldosilva.workshopmongo.resources;
 
+import com.aldosilva.workshopmongo.domain.Post;
 import com.aldosilva.workshopmongo.domain.User;
+import com.aldosilva.workshopmongo.dtos.AuthorDTO;
 import com.aldosilva.workshopmongo.dtos.UserDTO;
+import com.aldosilva.workshopmongo.services.PostService;
 import com.aldosilva.workshopmongo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,6 +21,9 @@ public class UserResource {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PostService postService;
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> findAll() {
@@ -55,4 +60,11 @@ public class UserResource {
         user.setId(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(value = "/{id}/posts")
+    public ResponseEntity<List<Post>> findPosts(@PathVariable String id) {
+        List<Post> posts = postService.findPostsByUserId(id);
+        return ResponseEntity.ok(posts);
+    }
+
 }

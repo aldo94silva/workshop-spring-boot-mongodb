@@ -2,6 +2,8 @@ package com.aldosilva.workshopmongo.config;
 
 import com.aldosilva.workshopmongo.domain.Post;
 import com.aldosilva.workshopmongo.domain.User;
+import com.aldosilva.workshopmongo.dtos.AuthorDTO;
+import com.aldosilva.workshopmongo.dtos.ComentDTO;
 import com.aldosilva.workshopmongo.repositories.PostRepository;
 import com.aldosilva.workshopmongo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +37,25 @@ public class Instatiation implements CommandLineRunner {
         User alex = new User(null, "Alex Green", "alex@gmail.com");
         User bob = new User(null, "Bob Grey", "bob@gmail.com");
 
-        Post post1 = new Post(null, stf.parse("21/03/2018"), "Partiu viagem",
-                "Vou viajar para São Paulo. Abraços!",maria);
-        Post post2 = new Post(null, stf.parse("23/03/2018"), "Bom dia", "Acordei feliz hoje!",maria);
-
         userRepository.saveAll(Arrays.asList(maria, alex, bob));
-        postRepository.saveAll(Arrays.asList(post1,post2));
+
+        Post post1 = new Post(null, stf.parse("21/03/2018"), "Partiu viagem",
+                "Vou viajar para São Paulo. Abraços!", new AuthorDTO(maria));
+        Post post2 = new Post(null, stf.parse("23/03/2018"), "Bom dia", "Acordei feliz hoje!",
+                new AuthorDTO(maria));
+
+        ComentDTO c1 = new ComentDTO("Boa viagem mano!", stf.parse("2018/03/21"), new AuthorDTO(alex));
+        ComentDTO c2 = new ComentDTO("Aproveite!", stf.parse("2018/03/22"), new AuthorDTO(bob));
+        ComentDTO c3 = new ComentDTO("Tenha um ótimo dia!", stf.parse("2018/03/23"), new AuthorDTO(alex));
+
+        post1.getComents().addAll(Arrays.asList(c1, c2));
+        post2.getComents().addAll(Arrays.asList(c3));
+
+        postRepository.saveAll(Arrays.asList(post1, post2));
+
+        maria.getPosts().addAll(Arrays.asList(post1,post2));
+
+        userRepository.save(maria);
+
     }
 }
